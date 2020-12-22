@@ -1,32 +1,37 @@
 from tkinter import *
+import game_session
+
+#version:       0.1.0
+#created by:    Bruno Ruiz S
 
 def run_main_menu():
     main_menu = Tk()
 
-    gamemode_frame = Frame(main_menu)
-    gamemode_frame.pack(fill = BOTH, expand = TRUE)
-    start_frame = Frame(main_menu)
-    start_frame.pack(fill = BOTH, expand = TRUE)
-    footer_frame = Frame(main_menu)
-    footer_frame.pack(fill = BOTH, expand = TRUE)
+    def start_game():
+        main_menu.destroy()
+        game_session.run_game_session()
+        pass
 
-    against_machine = Radiobutton(gamemode_frame, text = '1 Vs Machine', width = 15, state = DISABLED)
-    against_machine.pack(side = LEFT)
-    
-    against_someone = Radiobutton(gamemode_frame, text = '1 Vs 1', width = 15)
-    against_someone.pack(side = RIGHT)
+    active_profile = StringVar()
+    active_profile.set('admin')
 
-    start = Button(start_frame, text = 'Start Game!', width = 15)
-    start.pack(side = BOTTOM)
+    against_machine = Radiobutton(main_menu, text = '1 Vs Machine', width = 15, state = DISABLED)
+    against_machine.grid(row = 0, column = 0)
     
-    user = Label(footer_frame, text = 'Username')
-    user.pack(side = LEFT)
+    against_someone = Radiobutton(main_menu, text = '1 Vs 1', width = 15, state = DISABLED)
+    against_someone.grid(row = 0, column = 1)
 
-    statistics = Button(footer_frame, text = 'View statistics', width = 15)
-    statistics.pack(side = RIGHT)
+    start = Button(main_menu, text = 'Start Game!', width = 15, command = start_game)
+    start.grid(row = 1, column = 0, columnspan = 2)
     
-    main_menu.mainloop()
-    pass
+    profile_name = Label(main_menu, textvariable = active_profile)
+    profile_name.grid(row = 2, column = 0, sticky = 'W')
+
+    option_button = Button(main_menu, text = 'Options', width = 15)
+    option_button.grid(row = 2, column = 1)
+
+    return main_menu.mainloop()
+    
 
 if __name__ == '__main__':
     run_main_menu()
