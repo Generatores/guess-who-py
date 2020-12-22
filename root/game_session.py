@@ -1,32 +1,65 @@
 from tkinter import *
+import pandas as pd
+import random, json, photo_url
+
+df = pd.read_json('characters/standard_game/standard_game_df.json')
+
+def character_selection():
+    return random.randint(0,23)
+
+def user_round(column_name,criteria):
+    global df
+    df = df.loc[df[column_name] == criteria]
+    return df
+
+def computer_turn():
+    column_selection = user_input_column.get()
+    user_criteria = user_input_value.get()
+    user_round(column_selection, user_criteria)
+    computer_winning()
+    pass
 
 turn_counter = 0
-active_turn = 'Your turn'
+user_character = character_selection()
+machine_character = character_selection()
 
 def run_game_session():
     game_session = Tk()
+    active_turn = StringVar()
+    active_turn.set('Your turn')
+    ia_answer = StringVar()
+    ia_answer.set('')
 
-    def turn_color():
-        if active_turn == 'Computer`s turn':
-            return 'red'
-        return 'green'
+    def computer_winning():
+        global df
+        #print (df)
+        if len(df.axes[0]) == 1:
+            print (df['name'])
+            ia_answer.set('Your character is ' + df.name.to_string(index = False))
+        pass
+
+    def computer_turn():
+        column_selection = user_input_column.get()
+        user_criteria = user_input_value.get()
+        user_round(column_selection, user_criteria)
+        user_input_column.delete(0, END)
+        user_input_value.delete(0, END)
+        computer_winning()
+        pass
 
     def next_turn():
         global turn_counter
-        global active_turn
         if turn_counter == 0:
-            active_turn = 'Computer`s turn'
+            active_turn.set('Computer`s turn')
             turn_counter += 1
-            print (active_turn)
         else:
-            active_turn = ('Your turn')
+            active_turn.set('Your turn')
             turn_counter -= 1
-            print (active_turn)
 
     title = Label(game_session, text = 'Guess Who on Python')
     title.grid(row = 0, columnspan = 8)
-
-    char_1 = PhotoImage(file = r'characters/standard_game/Alfred.png')
+    
+    char_1 = PhotoImage(file = r'characters/standard_game/Alex.png')
     char_2 = PhotoImage(file = r'characters/standard_game/Alfred.png')
     char_3 = PhotoImage(file = r'characters/standard_game/Anita.png')
     char_4 = PhotoImage(file = r'characters/standard_game/Anne.png')
@@ -51,7 +84,7 @@ def run_game_session():
     char_23 = PhotoImage(file = r'characters/standard_game/Susan.png')
     char_24 = PhotoImage(file = r'characters/standard_game/Tom.png')
 
-    character_1 = Label(game_session, image = char_1)
+    character_1 = Label(game_session, image = photo_url.char_1)
     character_1.grid(row = 1, column = 0)
     character_2 = Label(game_session, image = char_2)
     character_2.grid(row = 1, column = 1)
@@ -100,7 +133,7 @@ def run_game_session():
     character_24 = Label(game_session, image = char_24)
     character_24.grid(row = 3, column = 7)
     
-    turn_indicator = Label(game_session, text = active_turn, fg = turn_color())
+    turn_indicator = Label(game_session, textvariable = active_turn)
     turn_indicator.grid(row = 0, column = 8, columnspan = 2)
 
     machine_output_title = Label(game_session, text = 'Machine output')
@@ -108,15 +141,29 @@ def run_game_session():
     machine_output_text = Label(game_session, text = 'Machine output goes right here...')
     machine_output_text.grid(row = 1, column = 9)
 
-    user_input_title = Label(game_session, text = 'User input')
-    user_input_title.grid(row = 3, column = 8)
-    user_input_class_title = Label(game_session, text = 'User input goes right here...')
-    user_input_class_title.grid(row = 3, column = 9)
+    user_input_title = Label(game_session, text = 'User console')
+    user_input_title.grid(row = 2, column = 8, columnspan = 2, sticky = 'N')
+    user_input_column = Entry(game_session)
+    user_input_column.grid(row = 2, column = 8)
+    user_input_value = Entry(game_session)
+    user_input_value.grid(row = 2, column = 9)
 
-    continue_button = Button(game_session, text = 'Continue...', command = next_turn)
-    continue_button.grid(row = 2, column = 8)
-    continue_button = Button(game_session, text = 'Surrender :(')
-    continue_button.grid(row = 2, column = 9)
+    continue_button = Button(game_session, text = 'Ask question', command = computer_turn)
+    continue_button.grid(row = 2, column = 9, sticky = 'S')
+
+    #admin console
+    char_assignation_title = Label(game_session, text = 'Your character is...')
+    char_assignation_title.grid(row = 0, column = 10)
+    char_on_game_value = Label(game_session, image = eval('char_' + str(user_character)))
+    char_on_game_value.grid(row = 1, column = 10)
+
+    char_assignation_title = Label(game_session, text = 'Computer character is...')
+    char_assignation_title.grid(row = 0, column = 11)
+    char_on_game_value = Label(game_session, image = eval('char_' + str(machine_character)))
+    char_on_game_value.grid(row = 1, column = 11)
+
+    computer_answer = Label(game_session, textvariable = ia_answer)
+    computer_answer.grid(row = 2, column = 10)
 
     game_session.mainloop()
     pass
