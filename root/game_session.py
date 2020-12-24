@@ -10,6 +10,10 @@ df = pd.read_json('characters/standard_game/standard_game_df.json')
 def character_selection():
     return random.randint(0,23)
 
+turn_counter = 0
+user_character = character_selection()
+machine_character = character_selection()
+
 def user_round(column_name,criteria):
     global df
     df = df.loc[df[column_name] == criteria]
@@ -22,35 +26,46 @@ def computer_turn():
     computer_winning()
     pass
 
-turn_counter = 0
-user_character = character_selection()
-machine_character = character_selection()
-
 def run_game_session():
     game_session = Tk()
+
     active_turn = StringVar()
     active_turn.set('Your turn')
     ia_answer = StringVar()
     ia_answer.set('')
+    column_input = StringVar()
+    column_input.set('Select column')
+    value_input = StringVar()
+    value_input.set('Select value')
     machine_question = StringVar()
-    machine_question = 'Machine\nquestion'
+    machine_question.set('Machine\nquestion')
     machine_properties = StringVar()
     machine_properties.set(df.loc[machine_character])
 
+    columns_to_select = ['gender', 'hat', 'hair_color', 'hair_length', 'brown_size', 'glasses', 'eye_color', 'nose_size', 'ear_rings', 'mustache', 'mouth_size', 'beard', 'bonnet', 'chaps']
+    values_to_select = ['Select Column']
+
     def computer_winning():
         global df
-        #print (df)
+        print (df)
         if len(df.axes[0]) == 1:
             print (df['name'])
             ia_answer.set('Your character is\n' + df.name.to_string(index = False))
         pass
 
+    def firm_column():
+        column_selected = column_input.get()
+        values_to_select.clear()
+        if column_selected == 'gender':
+            values_to_select.append(['male', 'female'])
+        else:
+            values_to_select.append(['yes', 'no'])
+        pass
+
     def computer_turn():
-        column_selection = user_input_column.get()
-        user_criteria = user_input_value.get()
+        column_selection = column_input.get()
+        user_criteria = value_input.get()
         user_round(column_selection, user_criteria)
-        user_input_column.delete(0, END)
-        user_input_value.delete(0, END)
         computer_winning()
         pass
 
@@ -152,11 +167,13 @@ def run_game_session():
 
     user_input_title = Label(game_session, text = 'User console')
     user_input_title.grid(row = 2, column = 8, columnspan = 2, sticky = 'N')
-    user_input_column = Entry(game_session)
+    user_input_column = OptionMenu(game_session, column_input, *columns_to_select)
     user_input_column.grid(row = 2, column = 8)
-    user_input_value = Entry(game_session)
+    user_input_value = OptionMenu(game_session, value_input, *values_to_select)
     user_input_value.grid(row = 2, column = 9)
 
+    firm_column_button = Button(game_session, text = 'Select Category', command = firm_column)
+    firm_column_button.grid(row = 2, column = 8, sticky = 'S')
     continue_button = Button(game_session, text = 'Ask question', command = computer_turn)
     continue_button.grid(row = 2, column = 9, sticky = 'S')
 
@@ -176,8 +193,7 @@ def run_game_session():
     computer_answer = Label(game_session, textvariable = ia_answer)
     computer_answer.grid(row = 2, column = 10)
 
-    game_session.mainloop()
-    pass
+    return game_session.mainloop()
 
 if __name__ == '__main__':
     run_game_session()

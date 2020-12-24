@@ -1,7 +1,0 @@
-columns_to_select = ['name', 'gender', 'hat', 'hair_color', 'hair_length', 'brown_size', 'glasses', 'eye_color', 'nose_size', 'ear_rings', 'mustache', 'mouth_size', 'beard', 'bonnet', 'chaps']
-gender_list = ['male', 'female']
-hair_color_list = ['black', 'red', 'yellow', 'brown', 'white']
-hair_length_list = ['short', 'long', 'none']
-smallbig_list = ['small', 'big']
-truefalse_list = ['true', 'false']
-eye_color_list = ['brown', 'blue']
