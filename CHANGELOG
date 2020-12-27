@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Game Profile`s system.
 - 1 vs 1 gamemode.
 - 1 vs machine gamemode.
+- Installator of new gamemodes package.
 
 ## [0.#.#] - 2020-##-##
 ###Added

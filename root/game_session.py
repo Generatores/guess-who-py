@@ -1,82 +1,68 @@
 from tkinter import *
 import pandas as pd
-import random, json
+import basic_functions as gs_bf
+from time import sleep
 
 #version:       0.1.0
 #created by:    Bruno Ruiz S
 
+user_character = gs_bf.character_selection()
+machine_character = gs_bf.character_selection()
+
 df = pd.read_json('characters/standard_game/standard_game_df.json')
-
-def character_selection():
-    return random.randint(0,23)
-
-turn_counter = 0
-user_character = character_selection()
-machine_character = character_selection()
-
-def user_round(column_name,criteria):
-    global df
-    df = df.loc[df[column_name] == criteria]
-    return df
-
-def computer_turn():
-    column_selection = user_input_column.get()
-    user_criteria = user_input_value.get()
-    user_round(column_selection, user_criteria)
-    computer_winning()
-    pass
 
 def run_game_session():
     game_session = Tk()
 
-    active_turn = StringVar()
-    active_turn.set('Your turn')
-    ia_answer = StringVar()
-    ia_answer.set('')
     column_input = StringVar()
-    column_input.set('Select column')
     value_input = StringVar()
-    value_input.set('Select value')
     machine_question = StringVar()
-    machine_question.set('Machine\nquestion')
-    machine_properties = StringVar()
-    machine_properties.set(df.loc[machine_character])
+    user_guess = StringVar()
+    ia_answer = StringVar()
 
-    columns_to_select = ['gender', 'hat', 'hair_color', 'hair_length', 'brown_size', 'glasses', 'eye_color', 'nose_size', 'ear_rings', 'mustache', 'mouth_size', 'beard', 'bonnet', 'chaps']
-    values_to_select = ['Select Column']
+    def user_turn():
+        column_selection = column_input.get()
+        user_criteria = value_input.get()
+        yes_button['state'] = ACTIVE
+        no_button['state'] = ACTIVE
+        continue_button['state'] = DISABLED
+        ia_filtering(column_selection, user_criteria)
+        computer_winning()
+        user_guess.set(df['name'])
+        pass
+    
+    def confirm_mq():
+        computer_operator = '=='
+        computer_turn(computer_operator)
+        pass
+
+    def negate_mq():
+        computer_operator = '!='
+        computer_turn(computer_operator)
+        pass
+    
+    def computer_turn(operator):
+        yes_button['state'] = DISABLED
+        no_button['state'] = DISABLED
+        continue_button['state'] = ACTIVE
+        print (operator)
+        pass
+
+    #Start of IA functions
+    def ia_filtering(column_name,criteria):
+        global df
+        df = df.loc[df[column_name] == criteria]
+        pass
 
     def computer_winning():
         global df
-        print (df)
         if len(df.axes[0]) == 1:
-            print (df['name'])
-            ia_answer.set('Your character is\n' + df.name.to_string(index = False))
+            ia_answer.set('Your character is ' + df['name'])
         pass
 
-    def firm_column():
-        column_selected = column_input.get()
-        values_to_select.clear()
-        if column_selected == 'gender':
-            values_to_select.append(['male', 'female'])
-        else:
-            values_to_select.append(['yes', 'no'])
+    def ia_question():
         pass
-
-    def computer_turn():
-        column_selection = column_input.get()
-        user_criteria = value_input.get()
-        user_round(column_selection, user_criteria)
-        computer_winning()
-        pass
-
-    def next_turn():
-        global turn_counter
-        if turn_counter == 0:
-            active_turn.set('Computer`s turn')
-            turn_counter += 1
-        else:
-            active_turn.set('Your turn')
-            turn_counter -= 1
+    #End of IA functions
 
     title = Label(game_session, text = 'Guess Who on Python')
     title.grid(row = 0, columnspan = 8)
@@ -154,27 +140,22 @@ def run_game_session():
     character_23.grid(row = 3, column = 6)
     character_24 = Label(game_session, image = char_23)
     character_24.grid(row = 3, column = 7)
-    
-    turn_indicator = Label(game_session, textvariable = active_turn)
-    turn_indicator.grid(row = 0, column = 8, columnspan = 2)
 
     machine_output = Label(game_session, textvariable = machine_question)
     machine_output.grid(row = 1, column = 8)
-    yes_button = Button(game_session, text = 'Yes')
+    yes_button = Button(game_session, text = 'Yes', command = confirm_mq, state = DISABLED)
     yes_button.grid(row = 1, column = 9, sticky = 'W')
-    no_button = Button(game_session, text = 'No')
+    no_button = Button(game_session, text = 'No', command = negate_mq, state = DISABLED)
     no_button.grid(row = 1, column = 9, sticky = 'E')
 
     user_input_title = Label(game_session, text = 'User console')
     user_input_title.grid(row = 2, column = 8, columnspan = 2, sticky = 'N')
-    user_input_column = OptionMenu(game_session, column_input, *columns_to_select)
+    user_input_column = Entry(game_session, textvariable = column_input)
     user_input_column.grid(row = 2, column = 8)
-    user_input_value = OptionMenu(game_session, value_input, *values_to_select)
+    user_input_value = Entry(game_session, textvariable = value_input)
     user_input_value.grid(row = 2, column = 9)
 
-    firm_column_button = Button(game_session, text = 'Select Category', command = firm_column)
-    firm_column_button.grid(row = 2, column = 8, sticky = 'S')
-    continue_button = Button(game_session, text = 'Ask question', command = computer_turn)
+    continue_button = Button(game_session, text = 'Ask question', command = user_turn)
     continue_button.grid(row = 2, column = 9, sticky = 'S')
 
     #admin console
@@ -187,11 +168,11 @@ def run_game_session():
     char_assignation_title.grid(row = 0, column = 11)
     char_on_game_value = Label(game_session, image = eval('char_' + str(machine_character)))
     char_on_game_value.grid(row = 1, column = 11)
-    char_properties = Label(game_session, textvariable = machine_properties)
-    char_properties.grid(row = 2, column = 11, rowspan = 2)
-
+    user_guess_label = Label(game_session, textvariable = user_guess)
+    user_guess_label.grid(row = 2, column = 11, rowspan = 2)
+    
     computer_answer = Label(game_session, textvariable = ia_answer)
-    computer_answer.grid(row = 2, column = 10)
+    computer_answer.grid(row = 3, column = 8, columnspan = 2)
 
     return game_session.mainloop()
 
