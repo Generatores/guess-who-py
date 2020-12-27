@@ -1,13 +1,16 @@
 from tkinter import *
 import pandas as pd
 import basic_functions as gs_bf
+import main_menu as gs_mm
+from tkinter import messagebox
 from time import sleep
-
-#version:       0.1.0
-#created by:    Bruno Ruiz S
+import json
 
 user_character = gs_bf.character_selection()
 machine_character = gs_bf.character_selection()
+
+f = open('profiles/admin.json')
+profile = json.load(f)
 
 df = pd.read_json('characters/standard_game/standard_game_df.json')
 
@@ -18,7 +21,28 @@ def run_game_session():
     value_input = StringVar()
     machine_question = StringVar()
     user_guess = StringVar()
-    ia_answer = StringVar()
+
+    def return_main_menu():
+        game_session.destroy()
+        gs_mm.run_main_menu()
+        pass
+
+    def main_reset_game():
+        messagebox.showinfo('Game restarted', 'The game was restarted')
+        profile['game_resets'] += 1
+        json.dump(profile, open('profiles/admin.json', 'w'))
+        reset_game()
+        pass
+
+    def reset_game():
+        global df
+        df = pd.read_json('characters/standard_game/standard_game_df.json')
+        user_guess.set('')
+        yes_button['state'] = DISABLED
+        no_button['state'] = DISABLED
+        continue_button['state'] = ACTIVE
+        pass
+
 
     def user_turn():
         column_selection = column_input.get()
@@ -28,7 +52,10 @@ def run_game_session():
         continue_button['state'] = DISABLED
         ia_filtering(column_selection, user_criteria)
         computer_winning()
-        user_guess.set(df['name'])
+        if len(df.axes[0]) != 24:
+            user_guess.set(df['name'])
+        else:
+            user_guess.set('')
         pass
     
     def confirm_mq():
@@ -57,7 +84,12 @@ def run_game_session():
     def computer_winning():
         global df
         if len(df.axes[0]) == 1:
-            ia_answer.set('Your character is ' + df['name'])
+            df.reset_index(drop = True, inplace = True)
+            character = df['name'].values[0]
+            messagebox.showinfo('Winner!', ('The computer won this round\nYour character is {}'.format(character)))
+            profile['losses'] += 1
+            json.dump(profile, open('profiles/admin.json', 'w'))
+            reset_game()
         pass
 
     def ia_question():
@@ -141,6 +173,11 @@ def run_game_session():
     character_24 = Label(game_session, image = char_23)
     character_24.grid(row = 3, column = 7)
 
+    reset_button = Button(game_session, text = 'Reset game', command = main_reset_game)
+    reset_button.grid(row = 0, column = 8, sticky = 'E')
+    return_button = Button(game_session, text = 'Return to Main Menu', command = return_main_menu)
+    return_button.grid(row = 0, column = 9, sticky = 'E')
+
     machine_output = Label(game_session, textvariable = machine_question)
     machine_output.grid(row = 1, column = 8)
     yes_button = Button(game_session, text = 'Yes', command = confirm_mq, state = DISABLED)
@@ -170,9 +207,6 @@ def run_game_session():
     char_on_game_value.grid(row = 1, column = 11)
     user_guess_label = Label(game_session, textvariable = user_guess)
     user_guess_label.grid(row = 2, column = 11, rowspan = 2)
-    
-    computer_answer = Label(game_session, textvariable = ia_answer)
-    computer_answer.grid(row = 3, column = 8, columnspan = 2)
 
     return game_session.mainloop()
 

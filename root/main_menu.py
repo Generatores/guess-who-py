@@ -1,8 +1,5 @@
 from tkinter import *
-import game_session
-
-#version:       0.1.0
-#created by:    Bruno Ruiz S
+import game_session, options_menu
 
 def run_main_menu():
     main_menu = Tk()
@@ -27,7 +24,7 @@ def run_main_menu():
     profile_name = Label(main_menu, textvariable = active_profile)
     profile_name.grid(row = 2, column = 0, sticky = 'W')
 
-    option_button = Button(main_menu, text = 'Options', width = 15)
+    option_button = Button(main_menu, text = 'Options', width = 15, command = options_menu.run_options_menu)
     option_button.grid(row = 2, column = 1)
 
     return main_menu.mainloop()
