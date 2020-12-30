@@ -1,13 +1,21 @@
 from tkinter import *
 import pandas as pd
-import basic_functions as gs_bf
 import main_menu as gs_mm
 from tkinter import messagebox
 from time import sleep
 import json
+import random
 
-user_character = gs_bf.character_selection()
-machine_character = gs_bf.character_selection()
+class game_char():
+    def __init__(self, master, image_path, row_no, column_no):
+        char = Label(master, image = image_path)
+        char.grid(row = row_no, column = column_no)
+
+def character_selection():
+    return random.randint(0,23)
+
+user_character = character_selection()
+machine_character = character_selection()
 
 f = open('profiles/admin.json')
 profile = json.load(f)
@@ -43,7 +51,6 @@ def run_game_session():
         continue_button['state'] = ACTIVE
         pass
 
-
     def user_turn():
         column_selection = column_input.get()
         user_criteria = value_input.get()
@@ -75,7 +82,6 @@ def run_game_session():
         print (operator)
         pass
 
-    #Start of IA functions
     def ia_filtering(column_name,criteria):
         global df
         df = df.loc[df[column_name] == criteria]
@@ -94,7 +100,6 @@ def run_game_session():
 
     def ia_question():
         pass
-    #End of IA functions
 
     title = Label(game_session, text = 'Guess Who on Python')
     title.grid(row = 0, columnspan = 8)
@@ -124,54 +129,30 @@ def run_game_session():
     char_22 = PhotoImage(file = r'characters/standard_game/Susan.png')
     char_23 = PhotoImage(file = r'characters/standard_game/Tom.png')
 
-    character_1 = Label(game_session, image = char_0)
-    character_1.grid(row = 1, column = 0)
-    character_2 = Label(game_session, image = char_1)
-    character_2.grid(row = 1, column = 1)
-    character_3 = Label(game_session, image = char_2)
-    character_3.grid(row = 1, column = 2)
-    character_4 = Label(game_session, image = char_3)
-    character_4.grid(row = 1, column = 3)
-    character_5 = Label(game_session, image = char_4)
-    character_5.grid(row = 1, column = 4)
-    character_6 = Label(game_session, image = char_5)
-    character_6.grid(row = 1, column = 5)
-    character_7 = Label(game_session, image = char_6)
-    character_7.grid(row = 1, column = 6)
-    character_8 = Label(game_session, image = char_7)
-    character_8.grid(row = 1, column = 7)
-    character_9 = Label(game_session, image = char_8)
-    character_9.grid(row = 2, column = 0)
-    character_10 = Label(game_session, image = char_9)
-    character_10.grid(row = 2, column = 1)
-    character_11 = Label(game_session, image = char_10)
-    character_11.grid(row = 2, column = 2)
-    character_12 = Label(game_session, image = char_11)
-    character_12.grid(row = 2, column = 3)
-    character_13 = Label(game_session, image = char_12)
-    character_13.grid(row = 2, column = 4)
-    character_14 = Label(game_session, image = char_13)
-    character_14.grid(row = 2, column = 5)
-    character_15 = Label(game_session, image = char_14)
-    character_15.grid(row = 2, column = 6)
-    character_16 = Label(game_session, image = char_15)
-    character_16.grid(row = 2, column = 7)
-    character_17 = Label(game_session, image = char_16)
-    character_17.grid(row = 3, column = 0)
-    character_18 = Label(game_session, image = char_17)
-    character_18.grid(row = 3, column = 1)
-    character_19 = Label(game_session, image = char_18)
-    character_19.grid(row = 3, column = 2)
-    character_20 = Label(game_session, image = char_19)
-    character_20.grid(row = 3, column = 3)
-    character_21 = Label(game_session, image = char_20)
-    character_21.grid(row = 3, column = 4)
-    character_22 = Label(game_session, image = char_21)
-    character_22.grid(row = 3, column = 5)
-    character_23 = Label(game_session, image = char_22)
-    character_23.grid(row = 3, column = 6)
-    character_24 = Label(game_session, image = char_23)
-    character_24.grid(row = 3, column = 7)
+    character_1 = game_char(game_session, char_0, 1, 0)
+    character_2 = game_char(game_session, char_1, 1, 1)
+    character_3 = game_char(game_session, char_2, 1, 2)
+    character_4 = game_char(game_session, char_3, 1, 3)
+    character_5 = game_char(game_session, char_4, 1, 4)
+    character_6 = game_char(game_session, char_5, 1, 5)
+    character_7 = game_char(game_session, char_6, 1, 6)
+    character_8 = game_char(game_session, char_7, 1, 7)
+    character_9 = game_char(game_session, char_8, 2, 0)
+    character_10 = game_char(game_session, char_9, 2, 1)
+    character_11= game_char(game_session, char_10, 2, 2)
+    character_12 = game_char(game_session, char_11, 2, 3)
+    character_13 = game_char(game_session, char_12, 2, 4)
+    character_14 = game_char(game_session, char_13, 2, 5)
+    character_15 = game_char(game_session, char_14, 2, 6)
+    character_16 = game_char(game_session, char_15, 2, 7)
+    character_17 = game_char(game_session, char_16, 3, 0)
+    character_18 = game_char(game_session, char_17, 3, 1)
+    character_19= game_char(game_session, char_18, 3, 2)
+    character_20 = game_char(game_session, char_19, 3, 3)
+    character_21 = game_char(game_session, char_20, 3, 4)
+    character_22 = game_char(game_session, char_21, 3, 5)
+    character_23 = game_char(game_session, char_22, 3, 6)
+    character_24 = game_char(game_session, char_23, 3, 7)
 
     reset_button = Button(game_session, text = 'Reset game', command = main_reset_game)
     reset_button.grid(row = 0, column = 8, sticky = 'E')

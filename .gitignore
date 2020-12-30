@@ -3,3 +3,4 @@ root/test.py
 profiles/test_1.json
 profiles/test_2.json
 profiles/admin.json
+.vscode

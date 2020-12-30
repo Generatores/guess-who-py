@@ -1,5 +1,5 @@
 from tkinter import *
-import json, new_profile_title
+import json, new_profile
 
 def run_options_menu():
     options_menu = Tk()
